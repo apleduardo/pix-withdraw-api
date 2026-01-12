@@ -1,0 +1,29 @@
+services:
+  hyperf:
+    container_name: hyperf
+    image: hyperf-skeleton
+    user: 1000:1000
+    build:
+      context: .
+    volumes:
+      - ./:/opt/www
+    ports:
+      - 9501:9501
+    environment:
+      - APP_ENV=dev
+      - SCAN_CACHEABLE=false
+    depends_on:
+      - mysql
+  mysql:
+    image: 'mysql/mysql-server:8.0'
+    ports:
+        - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+        MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+        MYSQL_ROOT_HOST: '%'
+        MYSQL_DATABASE: '${DB_DATABASE}'
+        MYSQL_USER: '${DB_USERNAME}'
+        MYSQL_PASSWORD: '${DB_PASSWORD}'
+networks:
+  default:
+    name: hyperf
