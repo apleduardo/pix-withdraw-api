@@ -1,5 +1,11 @@
 # PIX Withdraw API (Hyperf)
 
+## Project Instructions
+
+For detailed project definitions, requirements, and business rules, see the [INSTRUCOES.md](../INSTRUCOES.md) file at the root of the repository.
+
+---
+
 ## Project Summary
 This project is a layered Hyperf PHP API for managing PIX withdraws, including immediate and scheduled operations. It features pessimistic locking, transactional safety, real email notifications via Mailhog, and full test coverage (unit/integration). The system is ready for Docker-based development and includes a default account for quick testing.
 
@@ -14,6 +20,10 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
 
 ## How to Run the Application
 1. **Clone the repository**
+   ```bash
+   git clone git@github.com:apleduardo/pix-withdraw-api.git
+   cd pix-withdraw-api/api
+   ```
 2. **Start the environment:**
    ```bash
    docker compose up --build
@@ -115,6 +125,3 @@ This makes the system easy to extend for new PIX key types or future withdraw me
   ```bash
   docker compose exec hyperf composer test
   ```
-
----
-For more details, see the code and comments. For any issues, check the logs and Mailhog for troubleshooting.
