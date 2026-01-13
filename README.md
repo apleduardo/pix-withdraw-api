@@ -16,13 +16,37 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
 1. **Clone the repository**
 2. **Start the environment:**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 3. **Run migrations:**
    ```bash
-   docker-compose exec api php bin/hyperf.php migrate
+   docker compose exec hyperf php bin/hyperf.php migrate
    ```
    This will create tables and insert a default account with balance for testing.
+
+## Environment Setup
+Before starting the application, copy `.env.example` to `.env` and adjust any values as needed for your environment:
+
+```bash
+cp .env.example .env
+```
+
+- The default values in `.env.example` are ready for Docker Compose usage.
+- Set your `API_AUTH_TOKEN` in `.env` for authentication.
+
+## Authentication (Token)
+All requests require a Bearer token in the `Authorization` header. The token value is defined in the `.env` file:
+
+```
+API_AUTH_TOKEN=changeme
+```
+
+**How to send the token:**
+- Add the header:
+  ```
+  Authorization: Bearer changeme
+  ```
+- If the token is missing or incorrect, the API will return `401 Unauthorized`.
 
 ## How to Test a Withdraw Request
 You can use curl or Postman to test the withdraw endpoint. Example using the default account:
@@ -40,8 +64,36 @@ You can use curl or Postman to test the withdraw endpoint. Example using the def
   ```bash
   curl -X POST http://localhost:9501/account/00000000-0000-0000-0000-000000000001/balance/withdraw \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer changeme" \
     -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00}'
   ```
+
+## How to Add a New Withdraw Type (PIX Key)
+This project uses the Open/Closed principle (SOLID) and the Strategy pattern for PIX key types. To add a new type (e.g., CPF):
+
+1. **Create a new handler class:**
+   - Implement `App\Service\PixKeyHandlerInterface`.
+   - Example: `PixCpfHandler` for CPF validation and processing.
+2. **Register the handler:**
+   - Add the new handler to `App\Service\PixKeyHandlerFactory::$handlers`.
+3. **Update validation (optional):**
+   - Add the new type to the validation rule in the controller if needed.
+
+No changes are required in the controller or main service logic. Each handler is responsible for its own validation and processing.
+
+Example handler:
+```php
+class PixCpfHandler implements PixKeyHandlerInterface {
+    public function validate(array $data): ?string {
+        // CPF validation logic
+    }
+    public function process(string $accountId, array $data): array {
+        // CPF withdraw logic
+    }
+}
+```
+
+This makes the system easy to extend for new PIX key types or future withdraw methods.
 
 ## How to Access Database and Email System
 - **Database:**
@@ -55,13 +107,13 @@ You can use curl or Postman to test the withdraw endpoint. Example using the def
 - **Logs are written to:** `runtime/logs/hyperf.log`
 - You can view logs with:
   ```bash
-  docker-compose exec api tail -f runtime/logs/hyperf.log
+  docker compose exec hyperf tail -f runtime/logs/hyperf.log
   ```
 
 ## Running Tests
 - **Unit and integration tests:**
   ```bash
-  docker-compose exec api vendor/bin/phpunit
+  docker compose exec hyperf composer test
   ```
 
 ---

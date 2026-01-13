@@ -48,12 +48,23 @@ class WithdrawController extends AbstractController
                 'schedule' => 'nullable|date|after_or_equal:now',
             ],
             [
+                'method.required' => 'The method field is required.',
+                'method.in' => 'The method field must be PIX.',
+                'pix.type.required' => 'The pix.type field is required.',
                 'pix.type.in' => 'The pix.type field must be one of the following types: email.',
+                'pix.key.required' => 'The pix.key field is required.',
+                'pix.key.email' => 'The pix.key field must be a valid email address.',
+                'amount.required' => 'The amount field is required.',
+                'amount.numeric' => 'The amount field must be a number.',
+                'amount.min' => 'The amount must be at least 0.01.',
             ]
         );
         if ($validator->fails()) {
-            $this->logger->error('Withdraw validation failed', ['accountId' => $accountId, 'errors' => $validator->errors()->all()]);
-            return $response->json(['error' => $validator->errors()->first()])->withStatus(422);
+            // Always return the first error for the first failed field in the order of rules
+            $errors = $validator->errors()->all();
+            $errorMsg = $errors[0] ?? 'Validation error.';
+            $this->logger->error('Withdraw validation failed', ['accountId' => $accountId, 'errors' => $errors]);
+            return $response->json(['error' => $errorMsg])->withStatus(422);
         }
         $result = $this->withdrawService->requestWithdraw($accountId, $data);
         if (isset($result['error'])) {

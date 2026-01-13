@@ -10,6 +10,8 @@ use App\Repository\AccountWithdrawRepository;
 use App\Repository\AccountWithdrawPixRepository;
 use PHPUnit\Framework\TestCase;
 use Mockery;
+use App\Service\PixKeyHandlerFactory;
+use App\Service\PixEmailHandler;
 
 class WithdrawServiceTest extends TestCase
 {
@@ -22,7 +24,8 @@ class WithdrawServiceTest extends TestCase
         $logger = Mockery::mock(\Psr\Log\LoggerInterface::class);
         $logger->shouldReceive('error')->atLeast()->once();
         $emailService = Mockery::mock(\App\Service\EmailServiceInterface::class);
-        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $result = $service->requestWithdraw('fake-id', [
             'amount' => 100,
             'method' => 'PIX',
@@ -65,7 +68,8 @@ class WithdrawServiceTest extends TestCase
         $logger = Mockery::mock(\Psr\Log\LoggerInterface::class);
         $logger->shouldReceive('error')->atLeast()->once();
         $emailService = Mockery::mock(\App\Service\EmailServiceInterface::class);
-        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $result = $service->requestWithdraw('id', [
             'amount' => 100,
             'method' => 'PIX',
@@ -110,7 +114,8 @@ class WithdrawServiceTest extends TestCase
         $logger->shouldReceive('error')->zeroOrMoreTimes();
         $emailService = Mockery::mock(\App\Service\EmailServiceInterface::class);
         $emailService->shouldReceive('sendWithdrawNotification')->once();
-        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $result = $service->requestWithdraw('id', [
             'amount' => 100,
             'method' => 'PIX',
@@ -158,7 +163,8 @@ class WithdrawServiceTest extends TestCase
         $emailService->shouldReceive('sendWithdrawNotification')
             ->once()
             ->with('pix@email.com', \Mockery::type('array'));
-        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $result = $service->requestWithdraw('id', [
             'amount' => 100,
             'method' => 'PIX',
@@ -203,7 +209,8 @@ class WithdrawServiceTest extends TestCase
         $logger->shouldReceive('info');
         $emailService = \Mockery::mock(\App\Service\EmailServiceInterface::class);
         $emailService->shouldNotReceive('sendWithdrawNotification');
-        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $result = $service->requestWithdraw('id', [
             'amount' => 100,
             'method' => 'PIX',
@@ -249,7 +256,8 @@ class WithdrawServiceTest extends TestCase
         $logger->shouldReceive('info');
         $emailService = \Mockery::mock(\App\Service\EmailServiceInterface::class);
         $emailService->shouldReceive('sendWithdrawNotification')->once();
-        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService);
+        $pixKeyHandlerFactory = new PixKeyHandlerFactory();
+        $service = new \App\Service\WithdrawService($accountRepo, $withdrawRepo, $pixRepo, $logger, $emailService, $pixKeyHandlerFactory);
         $service->processScheduledWithdraws();
         $this->assertEquals(100, $account->balance);
         $this->assertTrue($withdraw->done);

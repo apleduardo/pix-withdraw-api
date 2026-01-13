@@ -43,13 +43,16 @@ class WithdrawIntegrationTest extends TestCase
             'amount' => 100.00,
             'schedule' => null
         ];
-        $response = $this->post("/account/{$account->id}/balance/withdraw", $payload);
+        $headers = [
+            'Authorization' => 'Bearer changeme',
+            'Content-Type' => 'application/json',
+        ];
+        $response = $this->json("/account/{$account->id}/balance/withdraw", $payload, $headers);
         $response->assertOk()->assertJson(['success' => true]);
         $account->refresh();
         $this->assertEquals(100.00, $account->balance);
         $this->assertDatabaseHas('account_withdraw', ['account_id' => $account->id, 'amount' => 100.00]);
         $this->assertDatabaseHas('account_withdraw_pix', ['type' => 'email', 'key' => 'pix@email.com']);
-        // Não é possível testar envio real de email no teste de integração, mas o fluxo está garantido
     }
 
     public function testWithdrawPixTypeInvalid()
@@ -65,7 +68,11 @@ class WithdrawIntegrationTest extends TestCase
             'amount' => 100.00,
             'schedule' => null
         ];
-        $response = $this->post("/account/{$account->id}/balance/withdraw", $payload);
+        $headers = [
+            'Authorization' => 'Bearer changeme',
+            'Content-Type' => 'application/json',
+        ];
+        $response = $this->json("/account/{$account->id}/balance/withdraw", $payload, $headers);
         $response->assertStatus(422)->assertJsonFragment([
             'error' => 'The pix.type field must be one of the following types: email.'
         ]);

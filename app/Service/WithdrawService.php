@@ -10,16 +10,32 @@ use Hyperf\Stringable\Str;
 use Psr\Log\LoggerInterface;
 use Throwable;
 use App\Service\EmailServiceInterface;
+use App\Service\PixKeyHandlerFactory;
 
 class WithdrawService
 {
+    protected AccountRepository $accountRepository;
+    protected AccountWithdrawRepository $withdrawRepository;
+    protected AccountWithdrawPixRepository $pixRepository;
+    protected LoggerInterface $logger;
+    protected EmailServiceInterface $emailService;
+    protected PixKeyHandlerFactory $pixKeyHandlerFactory;
+
     public function __construct(
-        protected AccountRepository $accountRepository,
-        protected AccountWithdrawRepository $withdrawRepository,
-        protected AccountWithdrawPixRepository $pixRepository,
-        protected LoggerInterface $logger,
-        protected EmailServiceInterface $emailService
-    ) {}
+        AccountRepository $accountRepository,
+        AccountWithdrawRepository $withdrawRepository,
+        AccountWithdrawPixRepository $pixRepository,
+        LoggerInterface $logger,
+        EmailServiceInterface $emailService,
+        PixKeyHandlerFactory $pixKeyHandlerFactory
+    ) {
+        $this->accountRepository = $accountRepository;
+        $this->withdrawRepository = $withdrawRepository;
+        $this->pixRepository = $pixRepository;
+        $this->logger = $logger;
+        $this->emailService = $emailService;
+        $this->pixKeyHandlerFactory = $pixKeyHandlerFactory;
+    }
 
     private function processImmediateWithdraw($account, $withdraw, $pix): array
     {
@@ -51,6 +67,15 @@ class WithdrawService
 
     public function requestWithdraw(string $accountId, array $data): array
     {
+        $type = $data['pix']['type'] ?? '';
+        $handler = $this->pixKeyHandlerFactory->getHandler($type);
+        if (!$handler) {
+            return ['error' => 'Unsupported PIX key type.', 'status' => 422];
+        }
+        $error = $handler->validate($data);
+        if ($error) {
+            return ['error' => $error, 'status' => 422];
+        }
         try {
             Db::beginTransaction();
             $account = $this->accountRepository->findByIdForUpdate($accountId);
