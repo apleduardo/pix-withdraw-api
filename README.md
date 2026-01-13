@@ -1,7 +1,5 @@
 # PIX Withdraw API (Hyperf)
 
-**Repository:** [git@github.com:apleduardo/pix-withdraw-api.git](git@github.com:apleduardo/pix-withdraw-api.git)
-
 ## Project Instructions
 
 For detailed project definitions, requirements, and business rules, see the [INSTRUCOES.md](https://github.com/apleduardo/pix-withdraw-api/blob/main/api/INSTRUCOES.md) file in the repository.
