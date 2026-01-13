@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('account_withdraw_id');
             $table->string('type');
             $table->string('key');
+            $table->timestamps();
             $table->foreign('account_withdraw_id')->references('id')->on('account_withdraw');
         });
     }

@@ -17,5 +17,8 @@ return [
         'ignore_annotations' => [
             'mixin',
         ],
+        'handlers' => [
+            // PcntlScanHandler is intentionally omitted to avoid pcntl_fork() usage in Docker
+        ],
     ],
 ];
