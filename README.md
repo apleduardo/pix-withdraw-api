@@ -1,63 +1,68 @@
-# Introduction
+# PIX Withdraw API (Hyperf)
 
-This is a skeleton application using the Hyperf framework. This application is meant to be used as a starting place for those looking to get their feet wet with Hyperf Framework.
+## Project Summary
+This project is a layered Hyperf PHP API for managing PIX withdraws, including immediate and scheduled operations. It features pessimistic locking, transactional safety, real email notifications via Mailhog, and full test coverage (unit/integration). The system is ready for Docker-based development and includes a default account for quick testing.
 
-# Requirements
+## Technologies Used
+- PHP 8.3
+- Hyperf Framework
+- Docker & Docker Compose
+- MySQL (or compatible)
+- Symfony Mailer (SMTP)
+- Mailhog (email testing)
+- PHPUnit & Mockery (testing)
 
-Hyperf has some requirements for the system environment, it can only run under Linux and Mac environment, but due to the development of Docker virtualization technology, Docker for Windows can also be used as the running environment under Windows.
+## How to Run the Application
+1. **Clone the repository**
+2. **Start the environment:**
+   ```bash
+   docker-compose up --build
+   ```
+3. **Run migrations:**
+   ```bash
+   docker-compose exec api php bin/hyperf.php migrate
+   ```
+   This will create tables and insert a default account with balance for testing.
 
-The various versions of Dockerfile have been prepared for you in the [hyperf/hyperf-docker](https://github.com/hyperf/hyperf-docker) project, or directly based on the already built [hyperf/hyperf](https://hub.docker.com/r/hyperf/hyperf) Image to run.
+## How to Test a Withdraw Request
+You can use curl or Postman to test the withdraw endpoint. Example using the default account:
 
-When you don't want to use Docker as the basis for your running environment, you need to make sure that your operating environment meets the following requirements:  
+- **Endpoint:** `POST /account/00000000-0000-0000-0000-000000000001/balance/withdraw`
+- **Payload:**
+  ```json
+  {
+    "method": "PIX",
+    "pix": { "type": "email", "key": "your@email.com" },
+    "amount": 100.00
+  }
+  ```
+- **Curl Example:**
+  ```bash
+  curl -X POST http://localhost:9501/account/00000000-0000-0000-0000-000000000001/balance/withdraw \
+    -H "Content-Type: application/json" \
+    -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00}'
+  ```
 
- - PHP >= 8.1
- - Any of the following network engines
-   - Swoole PHP extension >= 5.0，with `swoole.use_shortname` set to `Off` in your `php.ini`
-   - Swow PHP extension >= 1.3
- - JSON PHP extension
- - Pcntl PHP extension
- - OpenSSL PHP extension （If you need to use the HTTPS）
- - PDO PHP extension （If you need to use the MySQL Client）
- - Redis PHP extension （If you need to use the Redis Client）
- - Protobuf PHP extension （If you need to use the gRPC Server or Client）
+## How to Access Database and Email System
+- **Database:**
+  - Default: MySQL running in Docker (see `docker-compose.yml` for credentials)
+  - You can connect using any MySQL client to the exposed port.
+- **Mailhog (Email):**
+  - Access Mailhog web UI at [http://localhost:8025](http://localhost:8025)
+  - All emails sent by the API will appear here for testing.
 
-# Installation using Composer
+## How to View Application Logs
+- **Logs are written to:** `runtime/logs/hyperf.log`
+- You can view logs with:
+  ```bash
+  docker-compose exec api tail -f runtime/logs/hyperf.log
+  ```
 
-The easiest way to create a new Hyperf project is to use [Composer](https://getcomposer.org/). If you don't have it already installed, then please install as per [the documentation](https://getcomposer.org/download/).
+## Running Tests
+- **Unit and integration tests:**
+  ```bash
+  docker-compose exec api vendor/bin/phpunit
+  ```
 
-To create your new Hyperf project:
-
-```bash
-composer create-project hyperf/hyperf-skeleton path/to/install
-```
-
-If your development environment is based on Docker you can use the official Composer image to create a new Hyperf project:
-
-```bash
-docker run --rm -it -v $(pwd):/app composer create-project --ignore-platform-reqs hyperf/hyperf-skeleton path/to/install
-```
-
-# Getting started
-
-Once installed, you can run the server immediately using the command below.
-
-```bash
-cd path/to/install
-php bin/hyperf.php start
-```
-
-Or if in a Docker based environment you can use the `docker-compose.yml` provided by the template:
-
-```bash
-cd path/to/install
-docker-compose up
-```
-
-This will start the cli-server on port `9501`, and bind it to all network interfaces. You can then visit the site at `http://localhost:9501/` which will bring up Hyperf default home page.
-
-## Hints
-
-- A nice tip is to rename `hyperf-skeleton` of files like `composer.json` and `docker-compose.yml` to your actual project name.
-- Take a look at `config/routes.php` and `app/Controller/IndexController.php` to see an example of a HTTP entrypoint.
-
-**Remember:** you can always replace the contents of this README.md file to something that fits your project description.
+---
+For more details, see the code and comments. For any issues, check the logs and Mailhog for troubleshooting.
