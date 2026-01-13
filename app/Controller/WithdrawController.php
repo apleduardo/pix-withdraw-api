@@ -55,7 +55,7 @@ class WithdrawController extends AbstractController
             $this->logger->error('Withdraw validation failed', ['accountId' => $accountId, 'errors' => $validator->errors()->all()]);
             return $response->json(['error' => $validator->errors()->first()])->withStatus(422);
         }
-        $result = $this->withdrawService->withdraw($accountId, $data);
+        $result = $this->withdrawService->requestWithdraw($accountId, $data);
         if (isset($result['error'])) {
             $this->logger->error('Withdraw failed', ['accountId' => $accountId, 'error' => $result['error']]);
             return $response->json(['error' => $result['error']])->withStatus($result['status'] ?? 500);

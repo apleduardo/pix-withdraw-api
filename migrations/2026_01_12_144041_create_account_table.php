@@ -17,6 +17,15 @@ return new class extends Migration
             $table->decimal('balance', 15, 2)->default(0);
             $table->timestamps();
         });
+
+        // Insert default account for application startup (not used in integration tests)
+        \Hyperf\DbConnection\Db::table('account')->insert([
+            'id' => '00000000-0000-0000-0000-000000000001',
+            'name' => 'Default App Account',
+            'balance' => 1000.00,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
     }
 
     /**

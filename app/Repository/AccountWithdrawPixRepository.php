@@ -10,4 +10,9 @@ class AccountWithdrawPixRepository
     {
         return AccountWithdrawPix::create($data);
     }
+
+    public function findByWithdrawId(string $withdrawId): ?AccountWithdrawPix
+    {
+        return AccountWithdrawPix::where('account_withdraw_id', $withdrawId)->first();
+    }
 }
