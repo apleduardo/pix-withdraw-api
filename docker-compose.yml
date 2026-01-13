@@ -2,7 +2,6 @@ services:
   hyperf:
     container_name: hyperf
     image: hyperf-skeleton
-    user: 1000:1000
     build:
       context: .
     volumes:
