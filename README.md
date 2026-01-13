@@ -1,8 +1,10 @@
 # PIX Withdraw API (Hyperf)
 
+**Repository:** [git@github.com:apleduardo/pix-withdraw-api.git](git@github.com:apleduardo/pix-withdraw-api.git)
+
 ## Project Instructions
 
-For detailed project definitions, requirements, and business rules, see the [INSTRUCOES.md](../INSTRUCOES.md) file at the root of the repository.
+For detailed project definitions, requirements, and business rules, see the [INSTRUCOES.md](https://github.com/apleduardo/pix-withdraw-api/blob/main/api/INSTRUCOES.md) file in the repository.
 
 ---
 
@@ -22,7 +24,7 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
 1. **Clone the repository**
    ```bash
    git clone git@github.com:apleduardo/pix-withdraw-api.git
-   cd pix-withdraw-api/api
+   cd pix-withdraw-api
    ```
 2. **Start the environment:**
    ```bash
