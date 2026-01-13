@@ -103,7 +103,7 @@ You can use curl or Postman to test a scheduled withdraw. Example using the defa
   curl -X POST http://localhost:9501/account/00000000-0000-0000-0000-000000000001/balance/withdraw \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer changeme" \
-    -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00,"schedule":"2026-01-10 10:00:00"}'
+    -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00,"schedule":"2026-01-30 10:00:00"}'
   ```
 
 ## How to Process Scheduled Withdraws
