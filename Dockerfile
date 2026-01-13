@@ -47,7 +47,7 @@ WORKDIR /opt/www
 # RUN composer install --no-dev --no-scripts
 
 COPY . /opt/www
-RUN composer install --no-dev -o --ignore-platform-reqs && php bin/hyperf.php
+RUN composer install --no-dev && php bin/hyperf.php
 
 EXPOSE 9501
 
