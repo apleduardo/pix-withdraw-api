@@ -26,11 +26,16 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
    git clone git@github.com:apleduardo/pix-withdraw-api.git
    cd pix-withdraw-api
    ```
-2. **Start the environment:**
+2. **Copy the environment file**
+   ```bash
+   cp .env.example .env
+   ```
+   Adjust any values in `.env` as needed for your environment.
+3. **Start the environment:**
    ```bash
    docker compose up --build
    ```
-3. **Run migrations:**
+4. **Run migrations:**
    ```bash
    docker compose exec hyperf php bin/hyperf.php migrate
    ```
@@ -79,6 +84,36 @@ You can use curl or Postman to test the withdraw endpoint. Example using the def
     -H "Authorization: Bearer changeme" \
     -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00}'
   ```
+
+## How to Test a Scheduled Withdraw Request
+You can use curl or Postman to test a scheduled withdraw. Example using the default account:
+
+- **Endpoint:** `POST /account/00000000-0000-0000-0000-000000000001/balance/withdraw`
+- **Payload:**
+  ```json
+  {
+    "method": "PIX",
+    "pix": { "type": "email", "key": "your@email.com" },
+    "amount": 100.00,
+    "schedule": "2026-01-20 10:00:00"
+  }
+  ```
+- **Curl Example:**
+  ```bash
+  curl -X POST http://localhost:9501/account/00000000-0000-0000-0000-000000000001/balance/withdraw \
+    -H "Content-Type: application/json" \
+    -H "Authorization: Bearer changeme" \
+    -d '{"method":"PIX","pix":{"type":"email","key":"your@email.com"},"amount":100.00,"schedule":"2026-01-10 10:00:00"}'
+  ```
+
+## How to Process Scheduled Withdraws
+To process scheduled withdraws, run the following command inside the running Hyperf container:
+
+```bash
+docker compose exec hyperf php bin/hyperf.php withdraw:process-scheduled
+```
+
+This will execute all scheduled withdraws that are due.
 
 ## How to Add a New Withdraw Type (PIX Key)
 This project uses the Open/Closed principle (SOLID) and the Strategy pattern for PIX key types. To add a new type (e.g., CPF):

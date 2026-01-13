@@ -14,6 +14,7 @@ services:
       - SCAN_CACHEABLE=false
     depends_on:
       - mysql
+    entrypoint: ["sh", "-c", "composer install && php /opt/www/bin/hyperf.php start"]
   mysql:
     image: 'mysql/mysql-server:8.0'
     ports:
