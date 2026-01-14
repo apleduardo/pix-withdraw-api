@@ -28,7 +28,13 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
    ```bash
    cp .env.example .env
    ```
-   Adjust any values in `.env` as needed for your environment.
+   Before starting the application, copy `.env.example` to `.env` and adjust any values as needed for your environment:
+
+```bash
+cp .env.example .env
+```
+The default values in `.env.example` are ready for Docker Compose usage.
+ Set your `API_AUTH_TOKEN` in `.env` for authentication.
 3. **Start the environment:**
    ```bash
    docker compose up --build
@@ -38,16 +44,6 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
    docker compose exec hyperf php bin/hyperf.php migrate
    ```
    This will create tables and insert a default account with balance for testing.
-
-## Environment Setup
-Before starting the application, copy `.env.example` to `.env` and adjust any values as needed for your environment:
-
-```bash
-cp .env.example .env
-```
-
-- The default values in `.env.example` are ready for Docker Compose usage.
-- Set your `API_AUTH_TOKEN` in `.env` for authentication.
 
 ## Authentication (Token)
 All requests require a Bearer token in the `Authorization` header. The token value is defined in the `.env` file:
