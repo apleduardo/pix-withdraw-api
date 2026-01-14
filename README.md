@@ -1,7 +1,6 @@
 # PIX Withdraw API (Hyperf)
 
 ## Project Instructions
-
 For detailed project definitions, requirements, and business rules, see the [INSTRUCOES.md](https://github.com/apleduardo/pix-withdraw-api/blob/main/api/INSTRUCOES.md) file in the repository.
 
 ---
@@ -25,16 +24,12 @@ This project is a layered Hyperf PHP API for managing PIX withdraws, including i
    cd pix-withdraw-api
    ```
 2. **Copy the environment file**
+   Before starting the application, copy `.env.example` to `.env` and adjust any values as needed for your environment:
    ```bash
    cp .env.example .env
    ```
-   Before starting the application, copy `.env.example` to `.env` and adjust any values as needed for your environment:
-
-```bash
-cp .env.example .env
-```
-The default values in `.env.example` are ready for Docker Compose usage.
- Set your `API_AUTH_TOKEN` in `.env` for authentication.
+   The default values in `.env.example` are ready for Docker Compose usage.
+   Set your `API_AUTH_TOKEN` in `.env` for authentication.
 3. **Start the environment:**
    ```bash
    docker compose up --build
@@ -48,7 +43,7 @@ The default values in `.env.example` are ready for Docker Compose usage.
 ## Authentication (Token)
 All requests require a Bearer token in the `Authorization` header. The token value is defined in the `.env` file:
 
-```
+```env
 API_AUTH_TOKEN=changeme
 ```
 
